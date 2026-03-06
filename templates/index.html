@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Judd Investigations - Access Key Manager</title>
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --panel-bg: #161b22;
+            --border-color: #30363d;
+            --text-main: #c9d1d9;
+            --text-muted: #8b949e;
+            --accent-blue: #58a6ff;
+            --accent-red: #f85149;
+            --accent-green: #2ea043;
+            --btn-hover: #1f2428;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .panel {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 16px;
+            margin-top: 0;
+            margin-bottom: 15px;
+            color: var(--text-main);
+        }
+
+        .form-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        input[type="text"] {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 8px 12px;
+            border-radius: 6px;
+            flex-grow: 1;
+            font-size: 14px;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.3);
+        }
+
+        button {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 5px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+            height: 34px;
+        }
+
+        button:hover {
+            background-color: var(--btn-hover);
+            border-color: var(--text-muted);
+        }
+
+        button.primary {
+            background-color: var(--accent-green);
+            color: #ffffff;
+            border-color: rgba(240, 246, 252, 0.1);
+        }
+
+        button.primary:hover {
+            background-color: #2c974b;
+        }
+
+        button.danger {
+            color: var(--accent-red);
+        }
+
+        button.danger:hover {
+            background-color: var(--accent-red);
+            color: white;
+            border-color: var(--accent-red);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            color: var(--text-muted);
+            font-weight: 600;
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .key-code {
+            font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+            background-color: rgba(240, 246, 252, 0.1);
+            padding: 3px 6px;
+            border-radius: 4px;
+            color: var(--accent-blue);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background-color: rgba(46, 160, 67, 0.15);
+            color: #3fb950;
+            border: 1px solid rgba(46, 160, 67, 0.4);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--accent-blue);
+            margin: 10px 0 5px 0;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h1 class="title">Access Key Manager</h1>
+            <span style="color: var(--text-muted); font-size: 14px;">v1.0.0</span>
+        </div>
+
+        <!-- Stats Overview -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Submissions</div>
+                <div class="stat-value" id="stat-total-submissions">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Successes</div>
+                <div class="stat-value" style="color: var(--accent-green);" id="stat-total-successes">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Active Keys</div>
+                <div class="stat-value" id="stat-active-keys">0</div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2>Generate New Access Key</h2>
+            <form id="generate-form" class="form-group" onsubmit="event.preventDefault(); generateKey();">
+                <input type="text" id="owner-name" placeholder="Assign to (e.g. 'Laptop 1', 'Main PC')" required>
+                <button type="submit" class="primary">Generate Key</button>
+            </form>
+        </div>
+
+        <div class="panel">
+            <h2>Active Keys</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Access Key</th>
+                        <th>Assigned To</th>
+                        <th>Status</th>
+                        <th>Usage (Submissions)</th>
+                        <th>Last Active</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="keys-table-body">
+                    <tr>
+                        <td colspan="6" class="empty-state">Loading keys...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Fetch and render keys
+        async function loadKeys() {
+            try {
+                const response = await fetch('/api/keys');
+                const data = await response.json();
+
+                // Update stats
+                document.getElementById('stat-total-submissions').textContent = data.stats.total_leads;
+                document.getElementById('stat-total-successes').textContent = data.stats.total_success;
+                document.getElementById('stat-active-keys').textContent = data.keys.length;
+
+                const tbody = document.getElementById('keys-table-body');
+
+                if (data.keys.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="empty-state">No access keys found. Generate one above.</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = '';
+                data.keys.forEach(key => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                    <td><span class="key-code">${key.key}</span></td>
+                    <td>${key.owner}</td>
+                    <td><span class="status-badge status-active">Active</span></td>
+                    <td>
+                        <b style="color: var(--text-main)">${key.total_leads}</b> 
+                        <span style="color: var(--text-muted); font-size: 12px">(${key.total_successes} success)</span>
+                    </td>
+                    <td style="color: var(--text-muted); font-size: 13px;">${key.last_active}</td>
+                    <td><button class="danger" onclick="deleteKey('${key.key}')">Revoke</button></td>
+                `;
+                    tbody.appendChild(tr);
+                });
+            } catch (error) {
+                console.error('Error loading keys:', error);
+                document.getElementById('keys-table-body').innerHTML = '<tr><td colspan="6" class="empty-state" style="color: var(--accent-red)">Error loading keys. Is the server running?</td></tr>';
+            }
+        }
+
+        // Generate a new key
+        async function generateKey() {
+            const ownerInput = document.getElementById('owner-name');
+            const owner = ownerInput.value.trim();
+
+            if (!owner) return;
+
+            try {
+                const response = await fetch('/api/keys', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ owner: owner })
+                });
+
+                if (response.ok) {
+                    ownerInput.value = '';
+                    loadKeys();
+                } else {
+                    alert('Failed to generate key');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Network error while generating key');
+            }
+        }
+
+        // Delete a key
+        async function deleteKey(keyValue) {
+            if (!confirm(`Are you sure you want to permanently revoke access for key: ${keyValue}?`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/keys/${keyValue}`, {
+                    method: 'DELETE'
+                });
+
+                if (response.ok) {
+                    loadKeys();
+                } else {
+                    alert('Failed to delete key');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Network error while deleting key');
+            }
+        }
+
+        // Load keys on page load and refresh every 30 seconds
+        window.addEventListener('DOMContentLoaded', () => {
+            loadKeys();
+            setInterval(loadKeys, 30000);
+        });
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,10 @@
+DrissionPage
+pandas
+requests
+beautifulsoup4
+tqdm
+flask
+flask-sqlalchemy
+flask-cors
+openpyxl
+fake-useragent
