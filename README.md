@@ -1,6 +1,6 @@
 # Outreach Key Server
 
-[![CI](https://github.com/SucceedHQ/outreach-key-server/actions/workflows/ci.yml/badge.svg)](https://github.com/SucceedHQ/outreach-key-server/actions/workflows/ci.yml)
+[![CI](https://github.com/SucceedHQ-innovations/outreach-key-server/actions/workflows/ci.yml/badge.svg)](https://github.com/SucceedHQ-innovations/outreach-key-server/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.11-blue.svg)](https://python.org)
 
